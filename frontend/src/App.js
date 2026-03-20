@@ -28,7 +28,11 @@ import { AdminUsersPage, AdminProvidersPage, AdminDisputesPage, PendingProviders
 import { AdminChatPage } from './pages/admin/AdminChatPage';
 
 
+<<<<<<< milestone-3
 const ProtectedRoute = ({ children, requiredRole, allowGuest = false }) => {
+=======
+const ProtectedRoute = ({ children, requiredRole }) => {
+>>>>>>> main
   const { user, loading } = useAuth();
 
   if (loading) return <PageLoader />;

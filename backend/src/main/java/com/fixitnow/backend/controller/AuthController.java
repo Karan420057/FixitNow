@@ -35,6 +35,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
+<<<<<<< milestone-3
         String normalizedEmail = request.getEmail() == null
                 ? null
                 : request.getEmail().trim().toLowerCase();
@@ -43,6 +44,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email is required");
         }
 
+=======
+>>>>>>> main
         // Check if role is missing
         if (request.getRole() == null) {
             return ResponseEntity.badRequest().body("Role is required");
@@ -61,6 +64,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
+<<<<<<< milestone-3
         Role parsedRole;
         try {
             parsedRole = Role.valueOf(request.getRole().toUpperCase());
@@ -68,6 +72,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid role");
         }
 
+=======
+>>>>>>> main
         User user = new User();
         user.setName(request.getName());
         user.setEmail(normalizedEmail);
@@ -109,7 +115,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+<<<<<<< milestone-3
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+=======
+    public AuthResponse login(@RequestBody LoginRequest loginRequest) {
+>>>>>>> main
 
         String normalizedEmail = loginRequest.getEmail() == null
                 ? null
@@ -149,13 +159,21 @@ public class AuthController {
                 user.getEmail(),
                 user.getRole().name());
 
+<<<<<<< milestone-3
         return ResponseEntity.ok(
             new AuthResponse(
+=======
+        return new AuthResponse(
+>>>>>>> main
                 token,
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+<<<<<<< milestone-3
                 user.getRole().name().toLowerCase()));
+=======
+                user.getRole().name().toLowerCase());
+>>>>>>> main
 
     }
 }

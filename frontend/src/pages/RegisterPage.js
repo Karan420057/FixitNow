@@ -52,6 +52,7 @@ const SuccessPopup = ({ onClose, role }) => (
         <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping opacity-20" />
       </div>
       <h3 className="font-display font-bold text-xl text-white mb-3">
+<<<<<<< milestone-3
         {role === "provider"
           ? "Profile Submitted Successfully!"
           : "Account Created Successfully!"}
@@ -71,6 +72,27 @@ const SuccessPopup = ({ onClose, role }) => (
           </span>
         </div>
       )}
+=======
+  {role === "provider"
+    ? "Profile Submitted Successfully!"
+    : "Account Created Successfully!"}
+    </h3>
+
+    <p className="text-dark-300 text-sm leading-relaxed mb-6">
+      {role === "provider"
+        ? "Your profile has been submitted successfully and is under admin verification. You will be notified once approved."
+        : "Your account has been created successfully. You can now login."}
+    </p>
+
+    {role === "provider" && (
+      <div className="flex items-center justify-center gap-2 mb-6 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+        <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse flex-shrink-0" />
+        <span className="text-yellow-400 text-sm font-medium">
+          Status: Pending Admin Approval
+        </span>
+      </div>
+    )}
+>>>>>>> main
       <button onClick={onClose} className="btn-primary w-full">
         Got It, Thanks!
       </button>
@@ -125,6 +147,7 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [selectedSlots, setSelectedSlots] = useState([]);
+<<<<<<< milestone-3
   const [idFile, setIdFile] = useState(null);
   const [idDocType, setIdDocType] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
@@ -132,6 +155,16 @@ export const RegisterPage = () => {
   const [geoStatus, setGeoStatus] = useState("idle"); // 'idle' | 'loading' | 'success' | 'denied'
   const navigate = useNavigate();
   const [geoAddress, setGeoAddress] = useState("");
+=======
+  const [idFile, setIdFile]               = useState(null);
+  const [idDocType, setIdDocType]         = useState('');
+  const [showSuccess, setShowSuccess]     = useState(false);
+  const [geoCoords, setGeoCoords]         = useState({ lat: '', lng: '' });
+  const [geoStatus, setGeoStatus]         = useState('idle'); // 'idle' | 'loading' | 'success' | 'denied'
+  const { login } = useAuth();
+  const navigate  = useNavigate();
+  const [geoAddress, setGeoAddress] = useState('');
+>>>>>>> main
 
   // ── Reset form completely when component mounts ──────────────────────────────
   useEffect(() => {
@@ -200,6 +233,7 @@ export const RegisterPage = () => {
 
   // ── Geolocation capture ──────────────────────────────────────────────────────
   const handleGetLocation = () => {
+<<<<<<< milestone-3
     if (!navigator.geolocation) {
       setGeoStatus("denied");
       return;
@@ -250,6 +284,58 @@ export const RegisterPage = () => {
       { enableHighAccuracy: true, timeout: 10000 },
     );
   };
+=======
+  if (!navigator.geolocation) {
+    setGeoStatus('denied');
+    return;
+  }
+
+  setGeoStatus('loading');
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+
+      setGeoCoords({ lat, lng });
+
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+
+        const data = await res.json();
+        const a = data.address || {};
+
+        const parts = [
+          a.neighbourhood || a.suburb || a.village || a.town,
+          a.city || a.county,
+          a.state,
+        ].filter(Boolean);
+
+        const addr = parts.join(', ') || data.display_name || `${lat}, ${lng}`;
+
+        setGeoAddress(addr);
+
+        // 🔥 Auto-fill location field
+        setForm(prev => ({ ...prev, location: addr }));
+        setErrors(prev => ({ ...prev, location: '' }));
+
+      } catch {
+        setGeoAddress(`${lat}, ${lng}`);
+        setForm(prev => ({ ...prev, location: `${lat}, ${lng}` }));
+      }
+
+      setGeoStatus('success');
+    },
+    () => {
+      setGeoStatus('denied');
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+};
+>>>>>>> main
   // ── Validation ───────────────────────────────────────────────────────────────
   const validate = () => {
     const e = {};
@@ -271,6 +357,7 @@ export const RegisterPage = () => {
   };
 
   // ── Submit ───────────────────────────────────────────────────────────────────
+<<<<<<< milestone-3
   const handleSubmit = async (e) => {
     e.preventDefault();
     const v = validate();
@@ -332,6 +419,56 @@ export const RegisterPage = () => {
       setLoading(false);
     }
   };
+=======
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const v = validate();
+  if (Object.keys(v).length > 0) {
+    setErrors(v);
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const payload = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+      role: form.role.toUpperCase(),
+      location: form.location,
+      category: form.role === "provider" ? form.category : null,
+      serviceArea: form.role === "provider" ? form.serviceArea : null,
+      timeSlots: form.role === "provider" ? selectedSlots : [],
+      idDocType: form.role === "provider" ? idDocType : null,
+      latitude: geoCoords.lat || null,
+      longitude: geoCoords.lng || null
+    };
+
+    const response = await api.post("/auth/register", payload);
+
+    if (form.role === "provider") {
+      setShowSuccess(true);
+    } else {
+      // 👇 Show popup for customer also
+      setShowSuccess(true);
+    }
+  } catch (err) {
+  console.error("REGISTER ERROR:", err.response);
+
+  const message =
+    err.response?.data ||
+    err.response?.data?.message ||
+    "Registration failed. Try again.";
+
+  setErrors({ general: message });
+  }finally {
+    setLoading(false);
+  }
+};
+
+>>>>>>> main
 
   const handleSuccessClose = () => {
     setShowSuccess(false);
@@ -348,9 +485,13 @@ export const RegisterPage = () => {
         <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-brand-500/5 rounded-full blur-3xl" />
       </div>
 
+<<<<<<< milestone-3
       {showSuccess && (
         <SuccessPopup onClose={handleSuccessClose} role={form.role} />
       )}
+=======
+      {showSuccess && <SuccessPopup onClose={handleSuccessClose} role={form.role}  />}
+>>>>>>> main
 
       <div className="w-full max-w-lg relative z-10 animate-slide-up py-8">
         {/* Logo */}
@@ -492,7 +633,11 @@ export const RegisterPage = () => {
               )}
 
               {/* Coordinates display — read-only, shown only after capture */}
+<<<<<<< milestone-3
               {geoStatus === "success" && (
+=======
+              {geoStatus === 'success' && (
+>>>>>>> main
                 <div>
                   <label className="text-xs font-medium text-dark-400 mb-1 block">
                     Detected Location

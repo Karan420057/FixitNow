@@ -131,7 +131,11 @@ export const PendingProvidersPage = () => {
     filter === "all"
       ? providers
       : providers.filter(
+<<<<<<< milestone-3
           (p) => p.approvalStatus?.toLowerCase() === filter.toLowerCase(),
+=======
+          p => p.approvalStatus?.toLowerCase() === filter.toLowerCase()
+>>>>>>> main
         );
 
   const counts = {
@@ -145,12 +149,16 @@ export const PendingProvidersPage = () => {
     fetchPendingProviders();
   }, []);
 
-  const fetchPendingProviders = async () => {
+const fetchPendingProviders = async () => {
     try {
       setLoading(true);
       const res = await api.get("/admin/pending-providers");
       // Fallback to empty array if data is missing to prevent .filter crash
+<<<<<<< milestone-3
       setProviders(Array.isArray(res.data) ? res.data : []);
+=======
+      setProviders(Array.isArray(res.data) ? res.data : []); 
+>>>>>>> main
     } catch (err) {
       console.error("Error fetching pending providers:", err);
       setProviders([]);
@@ -564,6 +572,7 @@ export const AdminUsersPage = () => {
 // ─── Admin Providers Page ─────────────────────────────────────────────────────
 export const AdminProvidersPage = () => {
   const [providers, setProviders] = useState([]);
+<<<<<<< milestone-3
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -601,6 +610,47 @@ export const AdminProvidersPage = () => {
 
     return matchSearch && matchFilter;
   });
+=======
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+  fetchProviders();
+    }, []);
+
+    const fetchProviders = async () => {
+    try {
+      const res = await api.get("/admin/services"); 
+      setProviders(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching providers:", err);
+      setProviders([]);
+    }
+  };
+  const approveService = async (id) => {
+    try {
+      await api.put(`/admin/services/${id}/approve`);
+      fetchProviders();
+    } catch (err) {
+      console.error("Approve service failed:", err);
+    }
+  };
+    const filtered = providers.filter(p => {
+      const name = p.provider?.name || "";
+      const category = p.category || "";
+      const status = p.status || "";
+
+      const matchSearch =
+        name.toLowerCase().includes(search.toLowerCase()) ||
+        category.toLowerCase().includes(search.toLowerCase());
+
+      const matchFilter =
+        filter === "all" ||
+        status.toLowerCase() === filter;
+
+      return matchSearch && matchFilter;
+    });
+>>>>>>> main
 
   const statusStyle = (status) => {
     if (status === "approved")
@@ -617,6 +667,17 @@ export const AdminProvidersPage = () => {
       console.error("Suspend service failed:", err);
     }
   };
+<<<<<<< milestone-3
+=======
+  const suspendService = async (id) => {
+  try {
+    await api.put(`/admin/services/${id}/suspend`);
+    fetchProviders();
+  } catch (err) {
+    console.error("Suspend service failed:", err);
+  }
+  };
+>>>>>>> main
   return (
     <div className="space-y-6 animate-fade-in">
       <SectionHeader
@@ -662,12 +723,17 @@ export const AdminProvidersPage = () => {
                   <p className="text-dark-400 text-sm">{p.category}</p>
                 </div>
               </div>
+<<<<<<< milestone-3
               <span
                 className={`badge border ${statusStyle(p.status?.toLowerCase())}`}
               >
                 {p.status?.toLowerCase() === "approved" && (
                   <Shield className="w-3 h-3 mr-1" />
                 )}
+=======
+              <span className={`badge border ${statusStyle(p.status?.toLowerCase())}`}>
+                {p.status?.toLowerCase() === 'approved' && <Shield className="w-3 h-3 mr-1" />}
+>>>>>>> main
                 {p.status?.toLowerCase()}
               </span>
             </div>
@@ -689,6 +755,7 @@ export const AdminProvidersPage = () => {
               <button className="flex-1 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-dark-300 hover:text-white text-xs font-medium transition-all flex items-center justify-center gap-1">
                 <Eye className="w-3.5 h-3.5" /> View
               </button>
+<<<<<<< milestone-3
               {p.status?.toLowerCase() === "pending" && (
                 <button
                   onClick={() => approveService(p.id)}
@@ -701,6 +768,14 @@ export const AdminProvidersPage = () => {
                 onClick={() => suspendService(p.id)}
                 className="py-2 px-3 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-all"
               >
+=======
+              {p.status?.toLowerCase() === 'pending' && (
+                <button onClick={() => approveService(p.id)} className="flex-1 py-2 rounded-xl bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 text-xs font-medium transition-all flex items-center justify-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> Approve
+                </button>
+              )}
+              <button onClick={() => suspendService(p.id)} className="py-2 px-3 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-all">
+>>>>>>> main
                 <Ban className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -870,3 +945,5 @@ export const AdminDisputesPage = () => {
     </div>
   );
 };
+
+

@@ -15,6 +15,7 @@ public class ServiceResponse {
     private String providerName;
     private String providerLocation;
     
+<<<<<<< milestone-3
     private Long providerId; 
     
     private Double providerLat; 
@@ -26,6 +27,12 @@ public class ServiceResponse {
     private long completedJobs;
 
     // (Keep your existing constructor exactly as it is)
+=======
+    // ADDED: Coordinates for the map pins
+    private Double providerLat; 
+    private Double providerLng;
+
+>>>>>>> main
     public ServiceResponse(ServiceEntity service) {
         this.id = service.getId();
         this.category = service.getCategory();
@@ -35,6 +42,7 @@ public class ServiceResponse {
         this.availability = service.getAvailability();
         this.status = service.getStatus();
         this.providerName = service.getProvider().getName();
+<<<<<<< milestone-3
         this.providerId = service.getProvider().getId();
         this.providerLocation = service.getProvider().getLocation();
 
@@ -59,6 +67,19 @@ public class ServiceResponse {
     }
 
     // (Keep your existing getters)
+=======
+        
+        // FIX: Grab the actual city name, not the serviceArea number
+        this.providerLocation = service.getProvider().getLocation();
+
+        // FIX: Extract latitude and longitude safely
+        if (service.getProvider() != null && service.getProvider().getProviderProfile() != null) {
+            this.providerLat = service.getProvider().getProviderProfile().getLatitude();
+            this.providerLng = service.getProvider().getProviderProfile().getLongitude();
+        }
+    }
+
+>>>>>>> main
     public Long getId() { return id; }
     public String getCategory() { return category; }
     public String getSubcategory() { return subcategory; }
@@ -68,6 +89,7 @@ public class ServiceResponse {
     public String getProviderName() { return providerName; }
     public String getProviderLocation() { return providerLocation; }
     public String getStatus() { return status; }
+<<<<<<< milestone-3
     public Long getProviderId() { return providerId; }
     public Double getProviderLat() { return providerLat; }
     public Double getProviderLng() { return providerLng; }
@@ -76,4 +98,10 @@ public class ServiceResponse {
     public long getCompletedJobs() { return completedJobs; }
     public String getServiceArea() { return serviceArea; }
     public String getMemberSince() { return memberSince; }
+=======
+    
+    // ADDED: Getters for map coordinates
+    public Double getProviderLat() { return providerLat; }
+    public Double getProviderLng() { return providerLng; }
+>>>>>>> main
 }

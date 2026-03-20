@@ -110,7 +110,45 @@ export const ProviderServicesPage = () => {
       console.error("Delete failed:", err);
     }
   };
+  const handleCloseModal = () => {
+  setShowModal(false);
+  setEditingId(null);
+  setForm({
+    category: '',
+    subcategory: '',
+    description: '',
+    price: '',
+    availability: ''
+    });
+  };
+    const handleSaveService = async () => {
+    try {
+      if (editingId) {
+        await api.put(`/services/${editingId}`, {
+          ...form,
+          price: Number(form.price)
+        });
+      } else {
+        await api.post('/services', {
+          ...form,
+          price: Number(form.price)
+        });
+      }
 
+      fetchMyServices();
+      handleCloseModal();   // 🔥 THIS LINE FIXES EVERYTHING
+    } catch (err) {
+      console.error("Save failed:", err);
+    }
+  };
+  const handleDelete = async (id) => {
+  try {
+    await api.delete(`/services/${id}`);
+    fetchMyServices();  // reload from backend
+  } catch (err) {
+    console.error("Delete failed:", err);
+  }
+  };
   return (
     <div className="space-y-6 animate-fade-in">
       <SectionHeader
@@ -328,6 +366,23 @@ export const ProviderServicesPage = () => {
             </button>
           </div>
         </div>
+        
+      </Modal>
+      <Modal
+        isOpen={!!selectedService}
+        onClose={() => setSelectedService(null)}
+        title="Service Details"
+        size="sm"
+      >
+        {selectedService && (
+          <div className="space-y-2">
+            <p><strong>Category:</strong> {selectedService.category}</p>
+            <p><strong>Subcategory:</strong> {selectedService.subcategory}</p>
+            <p><strong>Description:</strong> {selectedService.description}</p>
+            <p><strong>Price:</strong> ₹{selectedService.price}</p>
+            <p><strong>Status:</strong> {selectedService.status}</p>
+          </div>
+        )}
       </Modal>
 
       <Modal

@@ -64,7 +64,14 @@ export const ServicesPage = () => {
       setRouteDistance("");
 
       // 🔥 FIX 2: ALWAYS fetch all services initially so the screen is never empty!
-      const res = await api.get("/services");
+      // const res = await api.get("/services");
+      const params = {};
+
+      if (locationSearch.trim()) {
+        params.location = locationSearch.trim();
+      }
+
+      const res = await api.get("/services", { params });
       const data = Array.isArray(res.data) ? res.data : [];
 
       // Frontend Math to calculate exact distance without relying on the backend filter

@@ -63,7 +63,7 @@ export const ServicesPage = () => {
       setRoute(null);
       setRouteDistance("");
 
-      // 🔥 FIX 2: ALWAYS fetch all services initially so the screen is never empty!
+      // FIX 2: ALWAYS fetch all services initially so the screen is never empty!
       // const res = await api.get("/services");
       const params = {};
 
